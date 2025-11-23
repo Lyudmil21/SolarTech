@@ -103,113 +103,86 @@ document.addEventListener("DOMContentLoaded", () => {
       icon.classList.toggle('bi-x', isOpen);
     });
   }
-
-  // 🔹 Contact Form Modal Handling 🔹
-  const form = document.getElementById("contactForm");
-  const successModal = document.getElementById("successModal")
-    ? new bootstrap.Modal(document.getElementById("successModal"))
-    : null;
-
-  if (form && successModal) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const fullname = form.querySelector("#fullname").value.trim();
-      const email = form.querySelector("#email").value.trim();
-      const subject = form.querySelector("#subject").value.trim();
-      const message = form.querySelector("#message").value.trim();
-
-      if (!fullname || !email || !subject || !message) {
-        alert("Please, fill all the required fields.");
-        return;
-      }
-
-      successModal.show();
-      form.reset();
-    });
-  }
 });
 
-let currentFormData = {
+  document.addEventListener('DOMContentLoaded', function () {
+  const contactForm = document.getElementById('contactForm');
+  const successModalEl = document.getElementById('successModal');
+  const successModal = successModalEl ? new bootstrap.Modal(successModalEl) : null;
+
+  let currentFormData = {
     fullname: '',
     email: '',
     phone: '', 
     subject: '',
     message: ''
-};
+  };
 
-document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contactForm');
-    
-    if (contactForm) {
-        // Запазваме стойностите ВЕДНАГА когато потребителят пише
-        contactForm.addEventListener('input', function(e) {
-            if (e.target.name === 'fullname') currentFormData.fullname = e.target.value;
-            if (e.target.name === 'email') currentFormData.email = e.target.value;
-            if (e.target.name === 'phone') currentFormData.phone = e.target.value;
-            if (e.target.name === 'subject') currentFormData.subject = e.target.value;
-            if (e.target.name === 'message') currentFormData.message = e.target.value;
-            
-            console.log("Input captured:", e.target.name, "=", e.target.value);
-        });
-        
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            console.log("=== FINAL ATTEMPT ===");
-            console.log("Current form data:", currentFormData);
-            console.log("Direct element values:");
-            console.log("fullname:", document.getElementById('fullname').value);
-            console.log("email:", document.getElementById('email').value);
-            console.log("phone:", document.getElementById('phone').value);
-            console.log("subject:", document.getElementById('subject').value);
-            console.log("message:", document.getElementById('message').value);
+  if (!contactForm || !successModal) return;
 
-            // Използвайте запазените стойности
-            const dataToSend = {
-                fullname: currentFormData.fullname || document.getElementById('fullname').value || 'MISSING',
-                email: currentFormData.email || document.getElementById('email').value || 'MISSING',
-                phone: currentFormData.phone || document.getElementById('phone').value || 'MISSING',
-                subject: currentFormData.subject || document.getElementById('subject').value || 'MISSING',
-                message: currentFormData.message || document.getElementById('message').value || 'MISSING'
-            };
-            
-            console.log("Data to send:", dataToSend);
+  // Capture input live
+  contactForm.addEventListener('input', function(e) {
+    const name = e.target.name;
+    if (name in currentFormData) currentFormData[name] = e.target.value;
+  });
 
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
+  // Handle form submission
+  contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbwN_qGwxDUANC-TV0ieiNMaTn5dGHiE3BEFO1lyg0hYf_ibTi8MHZBmPSZECB4bekty/exec';
-            
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: {'Content-Type': 'text/plain;charset=utf-8'},
-                body: JSON.stringify(dataToSend)
-            })
-            .then(response => response.json())
-            .then(responseData => {
-                if (responseData.result === 'success') {
-                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                    successModal.show();
-                    contactForm.reset();
-                    // Нулиране на запазените данни
-                    currentFormData = {fullname: '', email: '', phone: '', subject: '', message: ''};
-                } else {
-                    alert('Error sending message. Please try again.');
-                }
-            })
-            .catch(error => {
-                alert('Error sending message. Please try again.');
-            })
-            .finally(() => {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            });
-        });
+    const dataToSend = {
+      fullname: currentFormData.fullname.trim() || document.getElementById('fullname').value.trim(),
+      email: currentFormData.email.trim() || document.getElementById('email').value.trim(),
+      phone: currentFormData.phone.trim() || document.getElementById('phone').value.trim(),
+      subject: currentFormData.subject.trim() || document.getElementById('subject').value.trim(),
+      message: currentFormData.message.trim() || document.getElementById('message').value.trim()
+    };
+
+    // Check required fields
+    if (!dataToSend.fullname || !dataToSend.email || !dataToSend.subject || !dataToSend.message) {
+      alert('❌ Please fill all required fields!');
+      return;
     }
+
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwN_qGwxDUANC-TV0ieiNMaTn5dGHiE3BEFO1lyg0hYf_ibTi8MHZBmPSZECB4bekty/exec';
+
+    fetch(scriptURL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(responseData => {
+      if (responseData.result === 'success') {
+        // Show modal once
+        successModal.show();
+
+        // Reset form and currentFormData
+        contactForm.reset();
+        currentFormData = {fullname: '', email: '', phone: '', subject: '', message: ''};
+      } else {
+        alert('Error sending message. Please try again.');
+      }
+    })
+    .catch(() => alert('Error sending message. Please try again.'))
+    .finally(() => {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    });
+  });
+
+  // Optional: ensure modal can be closed with OK button
+  const closeBtn = successModalEl.querySelector('#successModalClose');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => successModal.hide());
+  }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const counters = document.querySelectorAll('.counter');
