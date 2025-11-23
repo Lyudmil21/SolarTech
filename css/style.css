@@ -144,7 +144,12 @@ h1 span {
   transform: translateY(-2px);
 }
 
-.btn.btn-primary,
+.btn.btn-primary {
+  background-color: #03A198;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .btn.btn-outline-primary:hover {
   color: #fff;
 }
@@ -240,7 +245,7 @@ h1 span {
 #features img {
   min-height: 400px;
   object-fit: cover;
-  padding: 40px;
+  padding: 90px 40px;
 }
 
 @media (max-width: 991.98px) {
@@ -413,7 +418,65 @@ h1 span {
   transform: translateY(0);
 }
 
+#footer {
+  background-color: var(--dark);
+  color: #fff;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 
+#footer .footer-top {
+  padding: 60px 0;
+  text-align: center;
+}
+
+#footer .footer-logo h3 {
+  font-weight: 700;
+  color: #fff;
+}
+
+#footer .footer-logo h3 span {
+  color: var(--primary);
+}
+
+#footer .footer-description {
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #ccc;
+}
+
+#footer .footer-socials {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+#footer .footer-socials .btn-circle {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  display: flex;
+  color: #fff;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+#footer .footer-socials .btn-square:hover {
+  transform: translateY(-3px);
+  background-color: #029283;
+}
+
+#footer .footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #aaa;
+}
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
